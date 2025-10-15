@@ -42,4 +42,4 @@ artifacts:
       - zap_report.html
 
 options:
-  logging: CLOUD_LOGGING
+  logging: CLOUD_LOGGING_ONLY
