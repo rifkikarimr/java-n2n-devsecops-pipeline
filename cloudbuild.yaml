@@ -1,61 +1,28 @@
 steps:
-  # Langkah 1: Gabungkan Build, SAST (Sonar), dan SCA (Snyk)
-  # Menggunakan satu image Maven untuk semua proses agar efisien.
-  - name: 'maven:3.9-eclipse-temurin-17'
-    entrypoint: 'mvn'
-    args:
-      - 'verify'
-      - 'snyk:test'
-      - 'sonar:sonar'
-      - '-Dsonar.host.url=https://sonarcloud.io'
-      - '-Dsonar.organization=krmdev'
-      - '-Dsonar.projectKey=rifkikarimr_java-n2n-devsecops-pipeline'
-      - '-Dsonar.token=${_SONAR_TOKEN}'
-      - '-Dsnyk.token=${_SNYK_TOKEN}'
-      # Perintah ini lebih andal untuk menghasilkan file JSON
-      - '-Dsnyk.jsonOutputFile=snyk_report.json'
-      - '-Dsnyk.failOnSeverity=high'
-      - '-Dsnyk.org=rifkikarimr'
-    id: 'Build, SAST, and SCA Scans'
-
-  # Langkah 2: Jalankan DAST scan menggunakan Docker image resmi OWASP ZAP
-  # Jauh lebih cepat dan stabil daripada menginstal manual.
-  - name: 'owasp/zap2docker-stable'
-    entrypoint: 'zap-baseline.py'
-    args:
-      - '-t'
-      - 'https://samudera.id' # URL target aplikasi Anda
-      - '-r'
-      - 'zap_report.html'   # Laporan dalam format HTML
-      - '-J'
-      - 'zap_report.json'   # Laporan dalam format JSON
-    id: 'DAST Scan using OWASP ZAP'
-
-  # Langkah 3: Jalankan skrip untuk membuat ringkasan keamanan dengan AI
-  - name: 'python:3.9'
+  # LANGKAH 1: CETAK VARIABEL UNTUK DEBUGGING
+  # Langkah ini akan menunjukkan nilai apa yang sebenarnya diterima oleh Cloud Build.
+  - name: 'ubuntu'
     entrypoint: 'bash'
     args:
       - '-c'
       - |-
-        pip install google-generativeai
-        python summarize_reports.py
-    secretEnv: ['GEMINI_API_KEY']
-    id: 'AI Security Summary'
+        echo "============================================================"
+        echo "MEMERIKSA VARIABEL YANG DITERIMA BUILD:"
+        echo "ORGANISASI UNTUK DIVERIFIKASI: ${_SNYK_ORG}"
+        echo "AWALAN TOKEN UNTUK DIVERIFIKASI: $(echo ${_SNYK_TOKEN} | cut -c 1-8)..."
+        echo "============================================================"
+    id: 'Debug Variables'
 
-# Menyimpan semua laporan yang dihasilkan ke GCS
-artifacts:
-  objects:
-    location: 'gs://java-devsecops-pipeline' # Pastikan nama bucket ini benar
-    paths:
-      - 'snyk_report.json'
-      - 'zap_report.json'
-      - 'zap_report.html'
-
-# Mengakses Gemini API Key dari Google Secret Manager
-availableSecrets:
-  secretManager:
-  - versionName: projects/${PROJECT_ID}/secrets/GEMINI_API_KEY/versions/latest
-    env: 'GEMINI_API_KEY'
+  # LANGKAH 2: TES OTENTIKASI SNYK SECARA LANGSUNG
+  # Menggunakan image resmi Snyk CLI yang lebih sederhana untuk tes.
+  - name: 'snyk/snyk:maven'
+    entrypoint: 'snyk'
+    args:
+      - 'test'
+      - '--org=rifkikarimr'
+    env:
+      - 'SNYK_TOKEN=${_SNYK_TOKEN}'
+    id: 'Direct Snyk Auth Test'
 
 options:
   logging: CLOUD_LOGGING_ONLY
