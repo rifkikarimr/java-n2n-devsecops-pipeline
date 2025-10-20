@@ -12,7 +12,7 @@ steps:
       - '-Dsonar.projectKey=rifkikarimr_java-n2n-devsecops-pipeline'
       - '-Dsonar.token=${_SONAR_TOKEN}'
       - '-Dsnyk.token=${_SNYK_TOKEN}'
-      # Perintah ini lebih andal untuk menghasilkan file JSON
+      - '-Dsnyk.org=${_SNYK_ORG}'
       - '-Dsnyk.jsonOutputFile=snyk_report.json'
       - '-Dsnyk.failOnSeverity=high'
       - '-Dsnyk.org=rifkikarimr'
@@ -21,7 +21,7 @@ steps:
 
   # Langkah 2: Jalankan DAST scan menggunakan Docker image resmi OWASP ZAP
   # Jauh lebih cepat dan stabil daripada menginstal manual.
-  - name: 'owasp/zap2docker-stable'
+  - name: 'zaproxy/zap-stable'
     entrypoint: 'zap-baseline.py'
     args:
       - '-t'
