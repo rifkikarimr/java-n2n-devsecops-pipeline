@@ -15,6 +15,7 @@ steps:
       # Perintah ini lebih andal untuk menghasilkan file JSON
       - '-Dsnyk.jsonOutputFile=snyk_report.json'
       - '-Dsnyk.failOnSeverity=high'
+      - '-Dsnyk.org=rifkikarimr'
     id: 'Build, SAST, and SCA Scans'
 
   # Langkah 2: Jalankan DAST scan menggunakan Docker image resmi OWASP ZAP
