@@ -33,7 +33,10 @@ steps:
       - '-r'
       - 'zap_report.html'        
       - '-J'
-      - 'zap_report.json'        
+      - 'zap_report.json'
+    volumes:
+      - name: 'zap_wrk'
+        path: '/zap/wrk'          
     id: 'DAST Scan using OWASP ZAP'
     allow_failure: true
 
