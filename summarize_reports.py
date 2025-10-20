@@ -1,6 +1,6 @@
 import os
 import json
-from google import genai
+import google.generativeai as genai
 
 # Konfigurasi API key dari Secret Manager
 GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
