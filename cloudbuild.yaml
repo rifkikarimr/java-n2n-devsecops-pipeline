@@ -33,7 +33,7 @@ steps:
 
         # Tahap 5: Jalankan AI Summary
         echo "--> Menjalankan AI Security Summary..."
-        pip3 install google-generativeai
+        pip3 install google-generativeai --break-system-packages
         python3 summarize_reports.py
     
     env:
