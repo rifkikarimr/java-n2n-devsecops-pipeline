@@ -39,7 +39,7 @@ steps:
     env:
       - 'SNYK_TOKEN=${_SNYK_TOKEN}'
     secretEnv: ['GEMINI_API_KEY', '_SONAR_TOKEN']
-    id: 'All-In-One DevSecOps Pipeline'
+    id: 'AI Summary DevSecOps Pipeline'
 
 # Menyimpan semua laporan yang dihasilkan
 artifacts:
