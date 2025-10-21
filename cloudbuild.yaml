@@ -38,7 +38,6 @@ steps:
     
     env:
       - 'SNYK_TOKEN=${_SNYK_TOKEN}'
-      - 'SONAR_TOKEN=${_SONAR_TOKEN}'
     secretEnv: ['GEMINI_API_KEY', '_SONAR_TOKEN']
     id: 'All-In-One DevSecOps Pipeline'
 
